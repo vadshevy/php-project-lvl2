@@ -20,10 +20,12 @@
     "bin": [
         "bin/gendiff"
       ],
-      "autoload": {
+    "autoload": {
         "files": [
+            "src/gendiff.php"
         ],
-    "psr-4": {
+        "psr-4": {
+            "Docopt\\": "./vendor/docopt/src"
         }
     },
     "scripts": {
