@@ -2,4 +2,8 @@
     "host": "hexlet.io",
     "timeout": 50,
     "proxy": "123.234.53.22"
+<<<<<<< 2f84d188d3ed36ff78440dfbce439adb07bc2604
 }
+=======
+  }
+>>>>>>> step 3 before refactoring

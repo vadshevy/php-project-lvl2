@@ -11,8 +11,5 @@ function render($coll)
     array_map(function ($row) {
         print_r("  {$row['state']} {$row['key']}: {$row['value']}\n");
     }, $coll);
-//    foreach ($input as $item) {
-//        line("    {$item}");
-//    }
     line("{");
 }

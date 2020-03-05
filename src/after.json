@@ -2,4 +2,8 @@
     "timeout": 20,
     "verbose": true,
     "host": "hexlet.io"
+<<<<<<< 2f84d188d3ed36ff78440dfbce439adb07bc2604
 }
+=======
+  }
+>>>>>>> step 3 before refactoring
