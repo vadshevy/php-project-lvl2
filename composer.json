@@ -22,15 +22,9 @@
       ],
     "autoload": {
         "files": [
-<<<<<<< 2f84d188d3ed36ff78440dfbce439adb07bc2604
             "src/gendiff.php",
             "src/index.php",
             "src/render.php"
-=======
-            "src/index.php",
-            "src/render.php",
-            "src/gendiff.php"
->>>>>>> step 3 before refactoring
         ],
         "psr-4": {
             "Docopt\\": "./vendor/docopt/src"
