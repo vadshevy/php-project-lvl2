@@ -10,4 +10,4 @@ if (file_exists($autoloadPath1)) {
 }
 
 
-Gendiff\Gendiff\gendiff();
+Gendiff\index\index();

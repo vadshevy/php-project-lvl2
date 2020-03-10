@@ -22,7 +22,9 @@
       ],
     "autoload": {
         "files": [
-            "src/gendiff.php"
+            "src/gendiff.php",
+            "src/index.php",
+            "src/render.php"
         ],
         "psr-4": {
             "Docopt\\": "./vendor/docopt/src"
