@@ -4,25 +4,26 @@ namespace Gendiff\gendiff;
 
 use function Gendiff\render\render;
 
-function gendiff($opts)
+function gendiff($file1, $file2)
 {
-    $before = $opts->args["<firstFile>"];
+//    $before = $opts->args["<firstFile>"];
 //    if (file_exists($before)) {
-    $file1 = file_get_contents($before, true);
-    $beforeContent = json_decode($file1, $assoc = true);
+    $data1 = file_get_contents($file1, true);
+    $beforeContent = json_decode($data1, $assoc = true);
 //    }
-    $after = $opts->args["<secondFile>"];
+//    $after = $opts->args["<secondFile>"];
 //    if (file_exists($after)) {
-    $file2 = file_get_contents($after, true);
-    $afterContent = json_decode($file2, $assoc = true);
+    $data2 = file_get_contents($file2, true);
+    $afterContent = json_decode($data2, $assoc = true);
 //    }
     $merged = array_merge($beforeContent, $afterContent);
     $result = [];
     $callback = function ($value, $key) use ($beforeContent, $afterContent, &$result) {
-        if (array_key_exists($key, $beforeContent) && array_key_exists($key, $afterContent) && $value === $beforeContent[$key] && $value === $afterContent[$key]) {
-            $result[] = ['key' => $key, 'value' => $value, 'state' => ' '];
+        $bothKeysExist = array_key_exists($key, $beforeContent) && array_key_exists($key, $afterContent);
+        if ($bothKeysExist && $value === $beforeContent[$key] && $value === $afterContent[$key]) {
+            $result[] = ['key' => $key, 'value' => $value, 'state' => ''];
         }
-        if (array_key_exists($key, $beforeContent) && array_key_exists($key, $afterContent) && $value !== $beforeContent[$key] && $value === $afterContent[$key]) {
+        if ($bothKeysExist && $value !== $beforeContent[$key] && $value === $afterContent[$key]) {
             $result[] = ['key' => $key, 'value' => $beforeContent[$key], 'state' => '-'];
         }
         if (array_key_exists($key, $beforeContent) && $value !== $beforeContent[$key]) {

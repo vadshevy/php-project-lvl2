@@ -1,0 +1,22 @@
+php:
+  - '7.2'
+install:
+  - composer self-update
+  - make install
+  
+script: make lint
+
+env:
+  global:
+    - CC_TEST_REPORTER_ID=b89a23a4b0f2f2e429832d578a0174e0b9167e7786fedbb7c4c8e53c6a0b0822
+language: ruby
+rvm:
+  - 2.2.0
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+script:
+  - bundle exec rspec
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

@@ -22,8 +22,8 @@ function index()
 DOCOPT;
 
     $opts = \Docopt::handle($doc, array('version' => '0.1'));
-
-    $result = gendiff($opts);
-
+    $file1 = $opts['<firstFile>'];
+    $file2 = $opts['<secondFile>'];
+    $result = gendiff($file1, $file2);
     print_r(render($result));
 }
