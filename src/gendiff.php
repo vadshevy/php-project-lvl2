@@ -3,13 +3,16 @@
 namespace Gendiff\gendiff;
 
 use function Gendiff\render\render;
+use function Gendiff\parsers\parse;
 
 function gendiff($file1, $file2)
 {
-    $data1 = file_get_contents($file1, true);
-    $beforeContent = json_decode($data1, $assoc = true);
-    $data2 = file_get_contents($file2, true);
-    $afterContent = json_decode($data2, $assoc = true);
+//    $data1 = file_get_contents($file1, true);
+//    $beforeContent = json_decode($data1, $assoc = true);
+    $beforeContent = parse($file1);
+//    $data2 = file_get_contents($file2, true);
+//    $afterContent = json_decode($data2, $assoc = true);
+    $afterContent = parse($file2);
     $merged = array_merge($beforeContent, $afterContent);
     $result = [];
     $callback = function ($value, $key) use ($beforeContent, $afterContent, &$result) {

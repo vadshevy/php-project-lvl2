@@ -18,7 +18,7 @@ function index()
     Options:
     -h --help                     Show this screen
     -v --version                  Show version
-    -f --format <fmt>                Report format [default: pretty]
+    -f --format <fmt>             Report format [default: pretty]
 DOCOPT;
 
     $opts = \Docopt::handle($doc, array('version' => '0.1'));

@@ -25,7 +25,8 @@
         "files": [
             "src/gendiff.php",
             "src/index.php",
-            "src/render.php"
+            "src/render.php",
+            "src/parsers.php"
         ],
         "psr-4": {
             "Docopt\\": "./vendor/docopt/src"
