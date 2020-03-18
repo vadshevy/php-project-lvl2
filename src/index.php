@@ -24,6 +24,7 @@ DOCOPT;
     $opts = \Docopt::handle($doc, array('version' => '0.1'));
     $file1 = $opts['<firstFile>'];
     $file2 = $opts['<secondFile>'];
+    $format = $opts['--format'];
     $result = gendiff($file1, $file2);
     print_r(render($result));
 }

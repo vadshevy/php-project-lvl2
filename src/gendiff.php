@@ -6,16 +6,10 @@ use function Gendiff\render\render;
 
 function gendiff($file1, $file2)
 {
-//    $before = $opts->args["<firstFile>"];
-//    if (file_exists($before)) {
     $data1 = file_get_contents($file1, true);
     $beforeContent = json_decode($data1, $assoc = true);
-//    }
-//    $after = $opts->args["<secondFile>"];
-//    if (file_exists($after)) {
     $data2 = file_get_contents($file2, true);
     $afterContent = json_decode($data2, $assoc = true);
-//    }
     $merged = array_merge($beforeContent, $afterContent);
     $result = [];
     $callback = function ($value, $key) use ($beforeContent, $afterContent, &$result) {
