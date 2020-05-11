@@ -4,6 +4,7 @@ namespace Gendiff\index;
 
 use function Gendiff\render\render;
 use function Gendiff\gendiff\gendiff;
+use function Gendiff\parsers\parse;
 
 function index()
 {
@@ -25,6 +26,8 @@ DOCOPT;
     $file1 = $opts['<firstFile>'];
     $file2 = $opts['<secondFile>'];
     $format = $opts['--format'];
-    $result = gendiff($file1, $file2);
-    print_r(render($result));
+    $coll1 = parse($file1);
+    $coll2 = parse($file2);
+    $ast = gendiff($coll1, $coll2);
+    print_r(render($ast));
 }

@@ -5,35 +5,31 @@ namespace Gendiff\gendiff;
 use function Gendiff\render\render;
 use function Gendiff\parsers\parse;
 
-function gendiff($file1, $file2)
+function gendiff($coll1, $coll2)
 {
-//    $data1 = file_get_contents($file1, true);
-//    $beforeContent = json_decode($data1, $assoc = true);
-    $beforeContent = parse($file1);
-//    $data2 = file_get_contents($file2, true);
-//    $afterContent = json_decode($data2, $assoc = true);
-    $afterContent = parse($file2);
-    $merged = array_merge($beforeContent, $afterContent);
-    $result = [];
-    $callback = function ($value, $key) use ($beforeContent, $afterContent, &$result) {
-        $bothKeysExist = array_key_exists($key, $beforeContent) && array_key_exists($key, $afterContent);
-        if ($bothKeysExist && $value === $beforeContent[$key] && $value === $afterContent[$key]) {
-            $result[] = ['key' => $key, 'value' => $value, 'state' => ''];
+    $merged = array_merge($coll1, $coll2);
+    
+    $logic = function($acc, $key) use ($coll1, $coll2, $merged) {
+        if (array_key_exists($key, $coll1) && array_key_exists($key, $coll2)) {
+            if ($coll1[$key] === $coll2[$key]) {
+                $acc[] = ['key' => $key, 'beforeValue' => $coll1[$key], 'afterValue' => $coll2[$key], 'children' => [], 'type' => 'unchanged'];
+            }
+            if ($coll1[$key] !== $coll2[$key]) {
+                if (is_array($coll1[$key]) && is_array($coll2[$key])){
+                    $acc[] = ['key' => $key, 'beforeValue' => $coll1[$key], 'afterValue' => $coll2[$key], 'children' => [gendiff($coll1[$key], $coll2[$key])], 'type' => 'changed'];
+                } else {
+                    $acc[] = ['key' => $key, 'beforeValue' => $coll1[$key], 'afterValue' => $coll2[$key], 'children' => [], 'type' => 'changed'];
+                }
+
+            }
         }
-        if ($bothKeysExist && $value !== $beforeContent[$key] && $value === $afterContent[$key]) {
-            $result[] = ['key' => $key, 'value' => $beforeContent[$key], 'state' => '-'];
+        if (array_key_exists($key, $coll1) && !array_key_exists($key, $coll2)) {
+            $acc[] = ['key' => $key, 'beforeValue' => $coll1[$key], 'afterValue' => null, 'children' => [], 'type' => 'removed'];
+        } 
+        if (!array_key_exists($key, $coll1) && array_key_exists($key, $coll2)) {
+            $acc[] = ['key' => $key, 'beforeValue' => null, 'afterValue' => $coll2[$key], 'children' => [], 'type' => 'added'];
         }
-        if (array_key_exists($key, $beforeContent) && $value !== $beforeContent[$key]) {
-            $result[] = ['key' => $key, 'value' => $value, 'state' => '+'];
-        }
-        if (!array_key_exists($key, $beforeContent)) {
-            $result[] = ['key' => $key, 'value' => $value, 'state' => '+'];
-        }
-        if (!array_key_exists($key, $afterContent)) {
-            $result[] = ['key' => $key, 'value' => $value, 'state' => '-'];
-        }
-        return $result;
+        return $acc;     
     };
-    array_walk($merged, $callback);
-    return($result);
+    return array_reduce(array_keys($merged), $logic, []);
 }
