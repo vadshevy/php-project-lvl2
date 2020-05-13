@@ -2,7 +2,8 @@
 
 namespace Gendiff\index;
 
-use function Gendiff\render\render;
+use function Gendiff\renderPretty\renderPretty;
+use function Gendiff\renderPlain\renderPlain;
 use function Gendiff\gendiff\gendiff;
 use function Gendiff\parsers\parse;
 
@@ -29,5 +30,9 @@ DOCOPT;
     $coll1 = parse($file1);
     $coll2 = parse($file2);
     $ast = gendiff($coll1, $coll2);
-    print_r(render($ast));
+    if ($format === 'plain') {
+        print_r(renderPlain($ast));
+    } else {
+        print_r(renderPretty($ast));
+    }
 }
