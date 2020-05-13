@@ -25,8 +25,8 @@
         "files": [
             "src/gendiff.php",
             "src/index.php",
-            "src/renderPretty.php",
-            "src/renderPlain.php",
+            "src/formatters/renderPretty.php",
+            "src/formatters/renderPlain.php",
             "src/parsers.php"
         ],
         "psr-4": {
