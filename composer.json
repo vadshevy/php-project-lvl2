@@ -27,6 +27,7 @@
             "src/index.php",
             "src/formatters/renderPretty.php",
             "src/formatters/renderPlain.php",
+            "src/formatters/renderJson.php",
             "src/parsers.php"
         ],
         "psr-4": {

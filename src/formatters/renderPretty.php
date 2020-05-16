@@ -4,10 +4,11 @@ namespace Gendiff\renderPretty;
 
 use function cli\line;
 use function cli\prompt;
+
 function renderPretty($ast)
 {
-    $render = function($coll, $depth = 0) use (&$render) {
-        $renderLines = function($node) {
+    $render = function ($coll, $depth = 0) use (&$render) {
+        $renderLines = function ($node) {
             if (is_array($node)) {
                 return array_reduce(array_keys($node), function ($acc, $n) use ($node) {
                     $offset = str_repeat("    ", 2);
@@ -19,7 +20,7 @@ function renderPretty($ast)
                 return $node;
             }
         };
-        $result = array_reduce($coll, function($acc, $node) use ($renderLines, $render, $depth) {
+        $result = array_reduce($coll, function ($acc, $node) use ($renderLines, $render, $depth) {
             $offset = str_repeat("    ", $depth);
 
             $beforeValue = is_bool($node['beforeValue']) ? var_export($node['beforeValue'], true) : $node['beforeValue'];
@@ -51,8 +52,8 @@ function renderPretty($ast)
                     $acc .= "{$offset}{$renderLines($node['beforeValue'])}";
                     $acc .= "{$offset}    }\n";
                 }
-            } 
-            if($node['type'] === 'changed') {
+            }
+            if ($node['type'] === 'changed') {
                 if (!is_array($node['beforeValue'])) {
                     $acc .= "{$offset}  - {$node['key']}: {$beforeValue}\n";
                     $acc .= "{$offset}  + {$node['key']}: {$afterValue}\n";
@@ -62,7 +63,7 @@ function renderPretty($ast)
                     $acc .= "{$offset}{$render($node['children'][0], $depth)}";
                     $acc .= "{$offset}    }\n";
                 }
-            } 
+            }
             return $acc;
         }, "");
         return $result;
