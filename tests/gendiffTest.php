@@ -3,6 +3,7 @@
 namespace Gendiff\gendiff\Tests;
 
 use PHPUnit\Framework\TestCase;
+
 use function Gendiff\renderPretty\renderPretty;
 use function Gendiff\renderPlain\renderPlain;
 use function Gendiff\renderJson\renderJson;
