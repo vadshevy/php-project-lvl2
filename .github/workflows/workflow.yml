@@ -15,7 +15,7 @@ jobs:
       run: make lint
     - name: Run test & publish code coverage
       uses: paambaati/codeclimate-action@v2.4.0
-        CC_TEST_REPORTER_ID: ${{ b89a23a4b0f2f2e429832d578a0174e0b9167e7786fedbb7c4c8e53c6a0b0822 }}
+        CC_TEST_REPORTER_ID: b89a23a4b0f2f2e429832d578a0174e0b9167e7786fedbb7c4c8e53c6a0b0822
       with:
         coverageCommand: make test
         debug: true
