@@ -41,7 +41,7 @@ class UserTest extends TestCase
         $expected = file_get_contents('./tests/fixtures/gendiffTestJson_expected', true);
         $this->assertSame($expected, renderJson(gendiff($content1, $content2)));
     }
-/*
+
     public function testYmlPretty()
     {
         $file1 = './tests/fixtures/before.yml';
@@ -51,7 +51,7 @@ class UserTest extends TestCase
         $expected = file_get_contents('./tests/fixtures/gendiffTestPretty_expected', true);
         $this->assertSame($expected, renderPretty(gendiff($content1, $content2)));
     }
-
+/*
     public function testYmlPlain()
     {
         $file1 = './tests/fixtures/before.yml';
@@ -61,7 +61,7 @@ class UserTest extends TestCase
         $expected = file_get_contents('./tests/fixtures/gendiffTestPlain_expected', true);
         $this->assertSame($expected, renderPlain(gendiff($content1, $content2)));
     }
-
+*/
     public function testYmlJSON()
     {
         $file1 = './tests/fixtures/before.yml';
@@ -71,5 +71,4 @@ class UserTest extends TestCase
         $expected = file_get_contents('./tests/fixtures/gendiffTestJson_expected', true);
         $this->assertSame($expected, renderJson(gendiff($content1, $content2)));
     }
-*/
 }
