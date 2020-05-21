@@ -2,9 +2,6 @@
 
 namespace Gendiff\renderPretty;
 
-use function cli\line;
-use function cli\prompt;
-
 function renderPretty($ast)
 {
     $render = function ($coll, $depth = 0) use (&$render) {

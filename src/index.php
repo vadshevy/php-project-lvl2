@@ -33,7 +33,7 @@ DOCOPT;
     $ast = gendiff($coll1, $coll2);
     if ($format === 'plain') {
         print_r(renderPlain($ast));
-    } elseif ($format === 'json' || $format === 'JSON') {
+    } elseif ($format === 'json') {
         print_r(renderJson($ast));
     } else {
         print_r(renderPretty($ast));

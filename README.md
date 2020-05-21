@@ -8,15 +8,13 @@
 <b>Intro:</b><br>
 this CLI tool can show differences between two text files (.json and .yml formats supported)<br>
 <br>
-<b>Prerequisites:</b><br>
-php 7.4<br>
-composer<br>
-<br>
 <b>installation:</b><br>
 composer global require vadshevy/hexlet-php-prj-2:dev-master<br>
 <br>
 <b>usage:</b><br>
-type gendiff --help<br>
+    gendiff (-h|--help)<br>
+    gendiff (-v|--version)<br>
+    gendiff [--format <fmt>] <firstFile> <secondFile><br>
 <br>
 <b>demo:</b><br>
 [![asciicast](https://asciinema.org/a/331040.svg)](https://asciinema.org/a/331040)

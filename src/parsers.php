@@ -6,11 +6,11 @@ use Symfony\Component\Yaml\Yaml;
 
 function isJson($file)
 {
-    return(strpos($file, ".json") !== false || strpos($file, ".JSON") !== false);
+    return(substr($file, -4) === "json" || strpos($file, -4) === "JSON");
 }
 function isYaml($file)
 {
-    return(strpos($file, ".yml") !== false || strpos($file, ".YML") !== false);
+    return(substr($file, -3) === "yml" || substr($file, -3) === "YML");
 }
 
 function parse($file)
