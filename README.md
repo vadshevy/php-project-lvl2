@@ -13,10 +13,9 @@ this CLI tool can show differences between two text files (.json and .yml format
 <code>composer global require vadshevy/hexlet-php-prj-2:dev-master</code><br>
 <br>
 <b>usage:</b><br>
-    <code>
-    gendiff (-h|--help)<br>
-    gendiff (-v|--version)<br>
-    gendiff [--format <fmt>] &lt;firstFile&gt; &lt;secondFile&gt;</code><br>
+    <code>gendiff (-h|--help)</code><br>
+    <code>gendiff (-v|--version)</code><br>
+    <code>gendiff [--format <fmt>] &lt;firstFile&gt; &lt;secondFile&gt;</code><br>
 <br>
 <b>demo:</b><br>
 [![asciicast](https://asciinema.org/a/331040.svg)](https://asciinema.org/a/331040)
