@@ -18,4 +18,4 @@ this CLI tool can show differences between two text files (.json and .yml format
     <code>gendiff [--format <fmt>] &lt;firstFile&gt; &lt;secondFile&gt;</code><br>
 <br>
 <b>demo:</b><br>
-[![asciicast](https://asciinema.org/a/331040.svg)](https://asciinema.org/a/331040)
+<a href="https://asciinema.org/a/331040" target="_blank"><img src="https://asciinema.org/a/331040.svg" /></a>
