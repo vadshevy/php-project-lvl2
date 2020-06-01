@@ -1,10 +1,10 @@
 install:
 	composer install
 lint:
-	composer run-script phpcs -- --standard=PSR12 --exclude=Generic.Files.LineLength src bin
+	composer exec phpcs -- --standard=PSR12 --exclude=Generic.Files.LineLength src bin tests -v
 lint-fix:
-	composer run-script phpcbf -- --standard=PSR12 src tests
+	composer exec phpcbf -- --standard=PSR12 src bin tests -v
 test:
-	composer run-script phpunit tests
+	composer exec phpunit -v
 test-coverage:
 	composer phpunit tests -- --coverage-clover build/logs/clover.xml

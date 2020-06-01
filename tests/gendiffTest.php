@@ -18,7 +18,7 @@ class UserTest extends TestCase
         $file2 = './tests/fixtures/after.json';
         $content1 = parse($file1);
         $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/gendiffTestPretty_expected', true);
+        $expected = file_get_contents('./tests/fixtures/diff.pretty', true);
         $this->assertSame($expected, renderPretty(gendiff($content1, $content2)));
     }
 
@@ -28,7 +28,7 @@ class UserTest extends TestCase
         $file2 = './tests/fixtures/after.json';
         $content1 = parse($file1);
         $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/gendiffTestPlain_expected', true);
+        $expected = file_get_contents('./tests/fixtures/diff.plain', true);
         $this->assertSame($expected, renderPlain(gendiff($content1, $content2)));
     }
 
@@ -38,7 +38,7 @@ class UserTest extends TestCase
         $file2 = './tests/fixtures/after.json';
         $content1 = parse($file1);
         $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/gendiffTestJson_expected', true);
+        $expected = file_get_contents('./tests/fixtures/diff.json', true);
         $this->assertSame($expected, renderJson(gendiff($content1, $content2)));
     }
 
@@ -48,7 +48,7 @@ class UserTest extends TestCase
         $file2 = './tests/fixtures/after.yml';
         $content1 = parse($file1);
         $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/gendiffTestPretty_expected', true);
+        $expected = file_get_contents('./tests/fixtures/diff.pretty', true);
         $this->assertSame($expected, renderPretty(gendiff($content1, $content2)));
     }
 /*
@@ -68,7 +68,7 @@ class UserTest extends TestCase
         $file2 = './tests/fixtures/after.yml';
         $content1 = parse($file1);
         $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/gendiffTestJson_expected', true);
+        $expected = file_get_contents('./tests/fixtures/diff.json', true);
         $this->assertSame($expected, renderJson(gendiff($content1, $content2)));
     }
 }
