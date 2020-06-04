@@ -4,71 +4,52 @@ namespace Gendiff\gendiff\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-use function Gendiff\renderPretty\renderPretty;
-use function Gendiff\renderPlain\renderPlain;
-use function Gendiff\renderJson\renderJson;
 use function Gendiff\gendiff\gendiff;
-use function Gendiff\parsers\parse;
 
 class UserTest extends TestCase
 {
-    public function testJsonPretty()
+    /**
+     * @dataProvider dataSet
+     */
+
+    public function testGenDiff($fileExtension, $outputFormat)
     {
-        $file1 = './tests/fixtures/before.json';
-        $file2 = './tests/fixtures/after.json';
-        $content1 = parse($file1);
-        $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/diff.pretty', true);
-        $this->assertSame($expected, renderPretty(gendiff($content1, $content2)));
+        $file1 = $this->getFixtureBefore($fileExtension);
+        $file2 = $this->getFixtureAfter($fileExtension);
+        $expected = file_get_contents($this->getFixtureExpected($outputFormat), true);
+        $diff = gendiff($file1, $file2, $outputFormat);
+        $this->assertSame($expected, $diff);
     }
 
-    public function testJsonPlain()
+    public function dataSet()
     {
-        $file1 = './tests/fixtures/before.json';
-        $file2 = './tests/fixtures/after.json';
-        $content1 = parse($file1);
-        $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/diff.plain', true);
-        $this->assertSame($expected, renderPlain(gendiff($content1, $content2)));
+        return [
+            ['json','pretty'],
+            ['json','plain'],
+            ['json','json'],
+            ['yml','pretty'],
+//            ['yml','plain'],
+            ['yml','json']
+        ];
     }
 
-    public function testJsonJSON()
+    private function getFixtureDir()
     {
-        $file1 = './tests/fixtures/before.json';
-        $file2 = './tests/fixtures/after.json';
-        $content1 = parse($file1);
-        $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/diff.json', true);
-        $this->assertSame($expected, renderJson(gendiff($content1, $content2)));
+        return 'tests/fixtures/';
     }
 
-    public function testYmlPretty()
+    private function getFixtureBefore($fileExtension)
     {
-        $file1 = './tests/fixtures/before.yml';
-        $file2 = './tests/fixtures/after.yml';
-        $content1 = parse($file1);
-        $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/diff.pretty', true);
-        $this->assertSame($expected, renderPretty(gendiff($content1, $content2)));
+        return "{$this->getFixtureDir()}/before.{$fileExtension}";
     }
-/*
-    public function testYmlPlain()
+
+    private function getFixtureAfter($fileExtension)
     {
-        $file1 = './tests/fixtures/before.yml';
-        $file2 = './tests/fixtures/after.yml';
-        $content1 = parse($file1);
-        $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/gendiffTestPlain_expected', true);
-        $this->assertSame($expected, renderPlain(gendiff($content1, $content2)));
+        return "{$this->getFixtureDir()}/after.{$fileExtension}";
     }
-*/
-    public function testYmlJSON()
+
+    private function getFixtureExpected($outputFormat)
     {
-        $file1 = './tests/fixtures/before.yml';
-        $file2 = './tests/fixtures/after.yml';
-        $content1 = parse($file1);
-        $content2 = parse($file2);
-        $expected = file_get_contents('./tests/fixtures/diff.json', true);
-        $this->assertSame($expected, renderJson(gendiff($content1, $content2)));
+        return "{$this->getFixtureDir()}/diff.{$outputFormat}";
     }
 }

@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+use function  Gendiff\gendiff\gendiff;
+
 $autoloadPath1 = __DIR__ . '/../../../autoload.php';
 $autoloadPath2 = __DIR__ . '/../vendor/autoload.php';
 if (file_exists($autoloadPath1)) {
@@ -9,5 +11,26 @@ if (file_exists($autoloadPath1)) {
     require_once $autoloadPath2;
 }
 
+$doc = <<<'DOC'
+Generate diff.
 
-Gendiff\index\index();
+Usage:
+    gendiff (-h|--help)
+    gendiff (-v|--version)
+    gendiff [--format <fmt>] <firstFile> <secondFile>
+Options:
+    -h --help                     Show this screen
+    -v --version                  Show version
+    -f --format <fmt>             Report format [default: pretty]. Available formats: pretty, plain, json
+
+DOC;
+
+$opts = Docopt::handle($doc, array('version' => '0.1'));
+
+
+$file1 = $opts['<firstFile>'];
+$file2 = $opts['<secondFile>'];
+$format = $opts['--format'];
+
+$diff = gendiff($file1, $file2, $format);
+print_r($diff);
