@@ -13,9 +13,6 @@ function gendiff($file1, $file2, $format)
     $data1 = parse($file1);
     $data2 = parse($file2);
     $diff = buildAST($data1, $data2);
-    $renderJson = 'renderJson';
-    $renderPlain = 'renderPlain';
-    $renderPretty = 'renderPretty';
     if ($format === 'json') {
         return renderJson($diff);
     }
