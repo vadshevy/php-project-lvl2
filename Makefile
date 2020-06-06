@@ -5,6 +5,6 @@ lint:
 lint-fix:
 	composer exec phpcbf -- --standard=PSR12 src bin tests -v
 test:
-	composer exec phpunit -v
+	composer run-script test
 test-coverage:
-	composer exec phpunit tests -- --coverage-clover build/logs/clover.xml
+	composer run-script test -- --coverage-clover build/logs/clover.xml
