@@ -1,6 +1,8 @@
 <?php
 
-namespace Gendiff\gendiff;
+namespace Gendiff\genDiff;
+
+use Funct\Collection;
 
 use function Gendiff\render\render;
 use function Gendiff\parsers\parse;
@@ -8,47 +10,56 @@ use function Gendiff\renderJson\renderJson;
 use function Gendiff\renderPlain\renderPlain;
 use function Gendiff\renderPretty\renderPretty;
 
-function gendiff($file1, $file2, $format)
+function genDiff($filePath1, $filePath2, $format)
 {
-    $data1 = parse($file1);
-    $data2 = parse($file2);
+    $data1 = parse(file_get_contents($filePath1), pathinfo($filePath1, PATHINFO_EXTENSION));
+    $data2 = parse(file_get_contents($filePath2), pathinfo($filePath2, PATHINFO_EXTENSION));
     $diff = buildAST($data1, $data2);
-    if ($format === 'json') {
-        return renderJson($diff);
-    }
-    if ($format === 'plain') {
-        return renderPlain($diff);
-    }
-    return renderPretty($diff);
+    $outputFormat = getFormatter($format);
+    return $outputFormat($diff);
 }
 
-function buildAST($coll1, $coll2)
+function buildAST($data1, $data2)
 {
-    $merged = array_merge($coll1, $coll2);
-
+    $unionKeys = Collection\union(array_keys($data1), array_keys($data2));
     return array_reduce(
-        array_keys($merged),
-        function ($acc, $key) use ($coll1, $coll2, $merged) {
-            if (array_key_exists($key, $coll1) && array_key_exists($key, $coll2)) {
-                if ($coll1[$key] === $coll2[$key]) {
-                    $acc[] = ['key' => $key, 'beforeValue' => $coll1[$key], 'afterValue' => $coll2[$key], 'children' => [], 'type' => 'unchanged'];
+        $unionKeys,
+        function ($acc, $key) use ($data1, $data2) {
+            if (array_key_exists($key, $data1) && array_key_exists($key, $data2)) {
+                if ($data1[$key] === $data2[$key]) {
+                    $acc[] = ['key' => $key, 'beforeValue' => $data1[$key], 'afterValue' => $data2[$key], 'children' => [], 'type' => 'unchanged'];
                 }
-                if ($coll1[$key] !== $coll2[$key]) {
-                    if (is_array($coll1[$key]) && is_array($coll2[$key])) {
-                        $acc[] = ['key' => $key, 'beforeValue' => $coll1[$key], 'afterValue' => $coll2[$key], 'children' => [buildAst($coll1[$key], $coll2[$key])], 'type' => 'changed'];
+                if ($data1[$key] !== $data2[$key]) {
+                    if (is_array($data1[$key]) && is_array($data2[$key])) {
+                        $acc[] = ['key' => $key, 'beforeValue' => $data1[$key], 'afterValue' => $data2[$key], 'children' => [buildAst($data1[$key], $data2[$key])], 'type' => 'changed'];
                     } else {
-                        $acc[] = ['key' => $key, 'beforeValue' => $coll1[$key], 'afterValue' => $coll2[$key], 'children' => [], 'type' => 'changed'];
+                        $acc[] = ['key' => $key, 'beforeValue' => $data1[$key], 'afterValue' => $data2[$key], 'children' => [], 'type' => 'changed'];
                     }
                 }
             }
-            if (array_key_exists($key, $coll1) && !array_key_exists($key, $coll2)) {
-                $acc[] = ['key' => $key, 'beforeValue' => $coll1[$key], 'afterValue' => null, 'children' => [], 'type' => 'removed'];
+            if (array_key_exists($key, $data1) && !array_key_exists($key, $data2)) {
+                $acc[] = ['key' => $key, 'beforeValue' => $data1[$key], 'afterValue' => null, 'children' => [], 'type' => 'removed'];
             }
-            if (!array_key_exists($key, $coll1) && array_key_exists($key, $coll2)) {
-                $acc[] = ['key' => $key, 'beforeValue' => null, 'afterValue' => $coll2[$key], 'children' => [], 'type' => 'added'];
+            if (!array_key_exists($key, $data1) && array_key_exists($key, $data2)) {
+                $acc[] = ['key' => $key, 'beforeValue' => null, 'afterValue' => $data2[$key], 'children' => [], 'type' => 'added'];
             }
             return $acc;
         },
         []
     );
+}
+
+function getFormatter($format)
+{
+    return function ($diff) use ($format) {
+        switch ($format) {
+            case 'json':
+                return renderJson($diff);
+            case 'plain':
+                return renderPlain($diff);
+            case 'pretty':
+                return renderPretty($diff);
+        }
+        return renderPretty($diff);
+    };
 }

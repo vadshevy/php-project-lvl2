@@ -4,23 +4,24 @@ namespace Gendiff\parsers;
 
 use Symfony\Component\Yaml\Yaml;
 
-function isJson($file)
+function parse($data, $dataType)
 {
-    return(substr($file, -4) === "json" || strpos($file, -4) === "JSON");
-}
-function isYaml($file)
-{
-    return(substr($file, -3) === "yml" || substr($file, -3) === "YML");
+    switch ($dataType) {
+        case 'json':
+            return parseJson($data);
+            break;
+        case 'yml' || 'yaml':
+            return parseYaml($data);
+        break;
+    }
 }
 
-function parse($file)
+function parseJson($data)
 {
-    if (isJson($file)) {
-        $data = file_get_contents($file, true);
-        return json_decode($data, $assoc = true);
-    }
-    if (isYaml($file)) {
-        $data = file_get_contents($file, true);
-        return Yaml::parse($data);
-    }
+    return json_decode($data, $assoc = true);
+}
+
+function parseYaml($data)
+{
+    return Yaml::parse($data);
 }

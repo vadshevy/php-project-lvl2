@@ -14,9 +14,9 @@ class UserTest extends TestCase
 
     public function testGenDiff($fileExtension, $outputFormat)
     {
-        $file1 = $this->getFixtureBefore($fileExtension);
-        $file2 = $this->getFixtureAfter($fileExtension);
-        $expected = file_get_contents($this->getFixtureExpected($outputFormat), true);
+        $expected = file_get_contents($this->getFixturePath("diff.{$outputFormat}"));
+        $file1 = $this->getFixturePath("before.{$fileExtension}");
+        $file2 = $this->getFixturePath("after.{$fileExtension}");
         $diff = gendiff($file1, $file2, $outputFormat);
         $this->assertSame($expected, $diff);
     }
@@ -33,23 +33,9 @@ class UserTest extends TestCase
         ];
     }
 
-    private function getFixtureDir()
+    private function getFixturePath($fixtureName)
     {
-        return 'tests/fixtures/';
-    }
-
-    private function getFixtureBefore($fileExtension)
-    {
-        return "{$this->getFixtureDir()}/before.{$fileExtension}";
-    }
-
-    private function getFixtureAfter($fileExtension)
-    {
-        return "{$this->getFixtureDir()}/after.{$fileExtension}";
-    }
-
-    private function getFixtureExpected($outputFormat)
-    {
-        return "{$this->getFixtureDir()}/diff.{$outputFormat}";
+        $parts = [__DIR__, 'fixtures', $fixtureName];
+        return realpath(implode(DIRECTORY_SEPARATOR, $parts));
     }
 }
