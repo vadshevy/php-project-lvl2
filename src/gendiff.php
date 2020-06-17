@@ -26,22 +26,46 @@ function buildAST($data1, $data2)
         $unionKeys,
         function ($acc, $key) use ($data1, $data2) {
             if (array_key_exists($key, $data1) && array_key_exists($key, $data2)) {
-                if ($data1[$key] === $data2[$key]) {
-                    $acc[] = ['key' => $key, 'beforeValue' => $data1[$key], 'afterValue' => $data2[$key], 'children' => [], 'type' => 'unchanged'];
-                }
-                if ($data1[$key] !== $data2[$key]) {
-                    if (is_array($data1[$key]) && is_array($data2[$key])) {
-                        $acc[] = ['key' => $key, 'beforeValue' => $data1[$key], 'afterValue' => $data2[$key], 'children' => [buildAst($data1[$key], $data2[$key])], 'type' => 'changed'];
-                    } else {
-                        $acc[] = ['key' => $key, 'beforeValue' => $data1[$key], 'afterValue' => $data2[$key], 'children' => [], 'type' => 'changed'];
+                if (is_array($data1[$key]) && is_array($data2[$key])) {
+                    $acc[] = ['key' => $key,
+                            'beforeValue' => $data1[$key],
+                            'afterValue' => $data2[$key],
+                            'children' => buildAst($data1[$key], $data2[$key]),
+                            'type' => 'nested'
+                            ];
+                } elseif ($data1[$key] === $data2[$key]) {
+                        $acc[] = ['key' => $key,
+                                'beforeValue' => $data1[$key],
+                                'afterValue' => $data2[$key],
+                                'children' => [],
+                                'type' => 'unchanged'
+                                ];
+                } else {
+                    if ($data1[$key] !== $data2[$key]) {
+                        $acc[] = ['key' => $key,
+                                 'beforeValue' => $data1[$key],
+                                'afterValue' => $data2[$key],
+                                'children' => [],
+                                'type' => 'changed'
+                                ];
                     }
                 }
             }
             if (array_key_exists($key, $data1) && !array_key_exists($key, $data2)) {
-                $acc[] = ['key' => $key, 'beforeValue' => $data1[$key], 'afterValue' => null, 'children' => [], 'type' => 'removed'];
+                $acc[] = ['key' => $key,
+                        'beforeValue' => $data1[$key],
+                        'afterValue' => null,
+                        'children' => [],
+                        'type' => 'removed'
+                        ];
             }
             if (!array_key_exists($key, $data1) && array_key_exists($key, $data2)) {
-                $acc[] = ['key' => $key, 'beforeValue' => null, 'afterValue' => $data2[$key], 'children' => [], 'type' => 'added'];
+                $acc[] = ['key' => $key,
+                        'beforeValue' => null,
+                        'afterValue' => $data2[$key],
+                        'children' => [],
+                        'type' => 'added'
+                        ];
             }
             return $acc;
         },

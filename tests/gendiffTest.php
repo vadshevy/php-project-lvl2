@@ -28,7 +28,7 @@ class UserTest extends TestCase
             ['json','plain'],
             ['json','json'],
             ['yml','pretty'],
-//            ['yml','plain'],
+            ['yml','plain'],
             ['yml','json']
         ];
     }

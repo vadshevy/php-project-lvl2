@@ -22,7 +22,49 @@ function renderPretty($ast)
 
             $beforeValue = is_bool($node['beforeValue']) ? var_export($node['beforeValue'], true) : $node['beforeValue'];
             $afterValue = is_bool($node['afterValue']) ? var_export($node['afterValue'], true) : $node['afterValue'];
+            switch ($node['type']) {
+                case 'nested':
+                    $depth += 1;
+                    $acc .= "{$offset}    {$node['key']}: {\n";
+                    $acc .= "{$offset}{$render($node['children'], $depth)}";
+                    $acc .= "{$offset}    }\n";
+                    break;
+                case 'changed':
+                    $acc .= "{$offset}  - {$node['key']}: {$beforeValue}\n";
+                    $acc .= "{$offset}  + {$node['key']}: {$afterValue}\n";
+                    break;
 
+                case 'unchanged':
+                    if (!is_array($node['beforeValue'])) {
+                        $acc .= "{$offset}    {$node['key']}: {$beforeValue}\n";
+                    } else {
+                        $acc .= "{$offset}    {$node['key']}: {\n";
+                        $acc .= "{$offset}{$renderLines($node['beforeValue'])}";
+                        $acc .= "{$offset}    }\n";
+                    }
+                    break;
+
+                case 'added':
+                    if (!is_array($node['afterValue'])) {
+                        $acc .= "{$offset}  + {$node['key']}: {$afterValue}\n";
+                    } else {
+                        $acc .= "{$offset}  + {$node['key']}: {\n";
+                        $acc .= "{$offset}{$renderLines($node['afterValue'])}";
+                        $acc .= "{$offset}    }\n";
+                    }
+                    break;
+
+                case 'removed':
+                    if (!is_array($node['beforeValue'])) {
+                        $acc .= "{$offset}  - {$node['key']}: {$beforeValue}\n";
+                    } else {
+                        $acc .= "{$offset}  - {$node['key']}: {\n";
+                        $acc .= "{$offset}{$renderLines($node['beforeValue'])}";
+                        $acc .= "{$offset}    }\n";
+                    }
+                    break;
+            }
+/*
             if ($node['type'] === 'added') {
                 if (!is_array($node['afterValue'])) {
                     $acc .= "{$offset}  + {$node['key']}: {$afterValue}\n";
@@ -57,10 +99,12 @@ function renderPretty($ast)
                 } else {
                     $depth += 1;
                     $acc .= "{$offset}    {$node['key']}: {\n";
-                    $acc .= "{$offset}{$render($node['children'][0], $depth)}";
+                    $acc .= "{$offset}{$render($node['children'], $depth)}";
                     $acc .= "{$offset}    }\n";
                 }
             }
+*/
+
             return $acc;
         }, "");
         return $result;
