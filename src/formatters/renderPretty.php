@@ -2,113 +2,63 @@
 
 namespace Gendiff\renderPretty;
 
+use Funct\Collection;
+
+const INDENT = "    ";
+const INDENT_MINUS = "  - ";
+const INDENT_PLUS = "  + ";
+
 function renderPretty($ast)
 {
-    $render = function ($coll, $depth = 0) use (&$render) {
-        $renderLines = function ($node) {
-            if (is_array($node)) {
-                return array_reduce(array_keys($node), function ($acc, $n) use ($node) {
-                    $offset = str_repeat("    ", 2);
-                    $value = is_bool($node[$n]) ? var_export($node[$n], true) : $node[$n];
-                    $acc .= "{$offset}{$n}: {$value}\n";
-                    return $acc;
-                }, "");
-            } else {
-                return $node;
-            }
-        };
-        $result = array_reduce($coll, function ($acc, $node) use ($renderLines, $render, $depth) {
-            $offset = str_repeat("    ", $depth);
-
-            $beforeValue = is_bool($node['beforeValue']) ? var_export($node['beforeValue'], true) : $node['beforeValue'];
-            $afterValue = is_bool($node['afterValue']) ? var_export($node['afterValue'], true) : $node['afterValue'];
+    $render = function ($coll, $depth) use (&$render) {
+        return array_map(function ($node) use ($depth, $render) {
+            $key = $node['key'];
+            $beforeValue = $node['beforeValue'];
+            $afterValue = $node['afterValue'];
+            $children = $node['children'];
             switch ($node['type']) {
                 case 'nested':
-                    $depth += 1;
-                    $acc .= "{$offset}    {$node['key']}: {\n";
-                    $acc .= "{$offset}{$render($node['children'], $depth)}";
-                    $acc .= "{$offset}    }\n";
-                    break;
+                    return [
+                        makeIndentation($depth + 1) . "{$key}: {",
+                        $render($children, $depth + 1),
+                        makeIndentation($depth + 1) . "}"
+                    ];
                 case 'changed':
-                    $acc .= "{$offset}  - {$node['key']}: {$beforeValue}\n";
-                    $acc .= "{$offset}  + {$node['key']}: {$afterValue}\n";
-                    break;
-
+                    return [
+                        stringify($key, $beforeValue, $depth, INDENT_MINUS),
+                        stringify($key, $afterValue, $depth, INDENT_PLUS)
+                    ];
                 case 'unchanged':
-                    if (!is_array($node['beforeValue'])) {
-                        $acc .= "{$offset}    {$node['key']}: {$beforeValue}\n";
-                    } else {
-                        $acc .= "{$offset}    {$node['key']}: {\n";
-                        $acc .= "{$offset}{$renderLines($node['beforeValue'])}";
-                        $acc .= "{$offset}    }\n";
-                    }
-                    break;
-
+                    return stringify($key, $beforeValue, $depth, INDENT);
                 case 'added':
-                    if (!is_array($node['afterValue'])) {
-                        $acc .= "{$offset}  + {$node['key']}: {$afterValue}\n";
-                    } else {
-                        $acc .= "{$offset}  + {$node['key']}: {\n";
-                        $acc .= "{$offset}{$renderLines($node['afterValue'])}";
-                        $acc .= "{$offset}    }\n";
-                    }
-                    break;
-
+                    return stringify($key, $afterValue, $depth, INDENT_PLUS);
                 case 'removed':
-                    if (!is_array($node['beforeValue'])) {
-                        $acc .= "{$offset}  - {$node['key']}: {$beforeValue}\n";
-                    } else {
-                        $acc .= "{$offset}  - {$node['key']}: {\n";
-                        $acc .= "{$offset}{$renderLines($node['beforeValue'])}";
-                        $acc .= "{$offset}    }\n";
-                    }
-                    break;
+                    return stringify($key, $beforeValue, $depth, INDENT_MINUS);
             }
-/*
-            if ($node['type'] === 'added') {
-                if (!is_array($node['afterValue'])) {
-                    $acc .= "{$offset}  + {$node['key']}: {$afterValue}\n";
-                } else {
-                    $acc .= "{$offset}  + {$node['key']}: {\n";
-                    $acc .= "{$offset}{$renderLines($node['afterValue'])}";
-                    $acc .= "{$offset}    }\n";
-                }
-            }
-            if ($node['type'] === 'removed') {
-                if (!is_array($node['beforeValue'])) {
-                    $acc .= "{$offset}  - {$node['key']}: {$beforeValue}\n";
-                } else {
-                    $acc .= "{$offset}  - {$node['key']}: {\n";
-                    $acc .= "{$offset}{$renderLines($node['beforeValue'])}";
-                    $acc .= "{$offset}    }\n";
-                }
-            }
-            if ($node['type'] === 'unchanged') {
-                if (!is_array($node['beforeValue'])) {
-                    $acc .= "{$offset}    {$node['key']}: {$beforeValue}\n";
-                } else {
-                    $acc .= "{$offset}    {$node['key']}: {\n";
-                    $acc .= "{$offset}{$renderLines($node['beforeValue'])}";
-                    $acc .= "{$offset}    }\n";
-                }
-            }
-            if ($node['type'] === 'changed') {
-                if (!is_array($node['beforeValue'])) {
-                    $acc .= "{$offset}  - {$node['key']}: {$beforeValue}\n";
-                    $acc .= "{$offset}  + {$node['key']}: {$afterValue}\n";
-                } else {
-                    $depth += 1;
-                    $acc .= "{$offset}    {$node['key']}: {\n";
-                    $acc .= "{$offset}{$render($node['children'], $depth)}";
-                    $acc .= "{$offset}    }\n";
-                }
-            }
-*/
-
-            return $acc;
-        }, "");
-        return $result;
+        }, $coll);
     };
-    $result = "{\n{$render($ast)}}";
-    return $result;
+    return implode(PHP_EOL, array_merge(['{'], Collection\flattenAll($render($ast, 0)), ['}']));
+}
+
+function stringify($key, $value, $depth, $type = "")
+{
+    if (!is_array($value)) {
+        $data = is_bool($value) ? var_export($value, true) : $value;
+        $indentation = makeIndentation($depth);
+        return "{$indentation}{$type}{$key}: {$data}";
+    } else {
+        $data = array_map(function ($key) use ($value, $depth) {
+            return stringify($key, $value[$key], $depth + 2);
+        }, array_keys($value));
+        return [
+            makeIndentation($depth) . "{$type}{$key}: {",
+            $data,
+            makeIndentation($depth + 1) . "}"
+        ];
+    }
+}
+
+function makeIndentation($depth)
+{
+    return str_repeat(INDENT, $depth);
 }

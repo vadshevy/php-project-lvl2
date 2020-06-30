@@ -24,7 +24,7 @@
       ],
     "autoload": {
         "files": [
-            "src/gendiff.php",
+            "src/differ.php",
             "src/formatters/renderPretty.php",
             "src/formatters/renderPlain.php",
             "src/formatters/renderJson.php",

@@ -2,39 +2,34 @@
 
 namespace Gendiff\renderPlain;
 
+use Funct\Collection;
+
 function renderPlain($ast)
 {
-    $getNestedData = function ($node) {
-        $key = $node['key'];
-        $beforeValue = is_array($node['beforeValue']) ? "complex value" : $node['beforeValue'];
-        $afterValue = is_array($node['afterValue']) ? "complex value" : $node['afterValue'];
-        $result = ['key' => $key, 'beforeValue' => $beforeValue, 'afterValue' => $afterValue];
-        return $result;
-    };
 
-    $renderPlain = function ($coll, $parentKey = '') use (&$renderPlain, $getNestedData) {
-        return array_reduce($coll, function ($acc, $node) use ($renderPlain, $parentKey, $getNestedData) {
+    $render = function ($ast, $parentKey) use (&$render) {
+        return array_map(function ($node) use ($parentKey, $render) {
+            $before = stringify($node['beforeValue']);
+            $after = stringify($node['afterValue']);
+            $propertyName = "'{$parentKey}{$node['key']}'";
             switch ($node['type']) {
                 case 'nested':
                     $parentKey = "{$node['key']}.";
-                    $acc .= $renderPlain(array_values($node['children']), $parentKey);
-                    break;
+                    return $render($node['children'], $parentKey);
                 case 'changed':
-                    $afterValue = $getNestedData($node)['afterValue'];
-                    $beforeValue = $getNestedData($node)['beforeValue'];
-                    $acc .= "Property '{$parentKey}{$node['key']}' was changed. From '{$beforeValue}' to '{$afterValue}'\n";
-                    break;
+                    return "Property {$propertyName} was changed. From {$before} to {$after}";
                 case 'added':
-                    $afterValue = $getNestedData($node)['afterValue'];
-                    $acc .= "Property '{$parentKey}{$node['key']}' was added with value: '{$afterValue}'\n";
-                    break;
+                    return "Property {$propertyName} was added with value: {$after}";
                 case 'removed':
-                    $acc .= "Property '{$parentKey}{$node['key']}' was removed\n";
-                    break;
+                    return "Property {$propertyName} was removed";
             }
-            return $acc;
-        }, "");
+        }, $ast);
     };
-    $result = $renderPlain($ast);
-    return $result;
+    $coll = Collection\without(Collection\flattenAll($render($ast, "")), null);
+    return implode(PHP_EOL, $coll) . PHP_EOL;
+}
+
+function stringify($value)
+{
+    return is_object($value) || is_array($value) ? "'complex value'" : "'$value'";
 }

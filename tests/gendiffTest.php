@@ -12,24 +12,21 @@ class UserTest extends TestCase
      * @dataProvider dataSet
      */
 
-    public function testGenDiff($fileExtension, $outputFormat)
+    public function testGenDiff($fileExtension1, $fileExtension2, $outputFormat)
     {
         $expected = file_get_contents($this->getFixturePath("diff.{$outputFormat}"));
-        $file1 = $this->getFixturePath("before.{$fileExtension}");
-        $file2 = $this->getFixturePath("after.{$fileExtension}");
-        $diff = gendiff($file1, $file2, $outputFormat);
-        $this->assertSame($expected, $diff);
+        $diff1 = gendiff($this->getFixturePath("before.{$fileExtension1}"), $this->getFixturePath("after.{$fileExtension1}"), $outputFormat);
+        $diff2 = gendiff($this->getFixturePath("before.{$fileExtension2}"), $this->getFixturePath("after.{$fileExtension2}"), $outputFormat);
+        $this->assertSame($expected, $diff1);
+        $this->assertSame($expected, $diff2);
     }
 
     public function dataSet()
     {
         return [
-            ['json','pretty'],
-            ['json','plain'],
-            ['json','json'],
-            ['yml','pretty'],
-            ['yml','plain'],
-            ['yml','json']
+            ['yml','json','pretty'],
+            ['yml','json','plain'],
+            ['yml','json','json']
         ];
     }
 

@@ -8,20 +8,10 @@ function parse($data, $dataType)
 {
     switch ($dataType) {
         case 'json':
-            return parseJson($data);
-            break;
-        case 'yml' || 'yaml':
-            return parseYaml($data);
-        break;
+            return json_decode($data, $assoc = true);
+        case 'yml':
+            return Yaml::parse($data);
+        case 'yaml':
+            return Yaml::parse($data);
     }
-}
-
-function parseJson($data)
-{
-    return json_decode($data, $assoc = true);
-}
-
-function parseYaml($data)
-{
-    return Yaml::parse($data);
 }
