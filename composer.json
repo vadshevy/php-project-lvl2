@@ -28,7 +28,8 @@
             "src/formatters/renderPretty.php",
             "src/formatters/renderPlain.php",
             "src/formatters/renderJson.php",
-            "src/parsers.php"
+            "src/parsers.php",
+            "src/helpers.php"
         ],
         "psr-4": {
             "Docopt\\": "./vendor/docopt/src"
