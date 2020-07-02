@@ -1,6 +1,6 @@
 <?php
 
-namespace Gendiff\helpers;
+namespace Gendiff\formatters;
 
 use function Gendiff\renderJson\renderJson;
 use function Gendiff\renderPlain\renderPlain;

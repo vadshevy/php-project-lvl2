@@ -22,11 +22,13 @@ function renderPlain($ast)
                     return "Property {$propertyName} was added with value: {$after}";
                 case 'removed':
                     return "Property {$propertyName} was removed";
+                case 'unchanged':
+                    return [];
             }
         }, $ast);
     };
-    $coll = Collection\without(Collection\flattenAll($render($ast, "")), null);
-    return implode(PHP_EOL, $coll) . PHP_EOL;
+    $coll = Collection\flattenAll($render($ast, ""));
+    return implode(PHP_EOL, $coll);
 }
 
 function stringify($value)

@@ -6,7 +6,7 @@ use Funct\Collection;
 
 use function Gendiff\render\render;
 use function Gendiff\parsers\parse;
-use function Gendiff\helpers\getFormatter;
+use function Gendiff\formatters\getFormatter;
 
 function genDiff($filePath1, $filePath2, $format)
 {
@@ -26,37 +26,18 @@ function buildAST($data1, $data2)
             function ($key) use (&$buildDiff, $data1, $data2) {
                 if (array_key_exists($key, $data1) && array_key_exists($key, $data2)) {
                     if (is_array($data1[$key]) && is_array($data2[$key])) {
-                        return buildNode(['key' => $key,
-                                'beforeValue' => $data1[$key],
-                                'afterValue' => $data2[$key],
-                                'children' => $buildDiff($data1[$key], $data2[$key]),
-                                'type' => 'nested'
-                                ]);
+                        return buildNode($key, $data1[$key], $data2[$key], $buildDiff($data1[$key], $data2[$key]), 'nested');
                     } elseif ($data1[$key] === $data2[$key]) {
-                        return buildNode(['key' => $key,
-                                'beforeValue' => $data1[$key],
-                                'afterValue' => $data2[$key],
-                                'type' => 'unchanged'
-                                ]);
+                        return buildNode($key, $data1[$key], $data2[$key], [], 'unchanged');
                     } else {
-                        return buildNode(['key' => $key,
-                                 'beforeValue' => $data1[$key],
-                                'afterValue' => $data2[$key],
-                                'type' => 'changed'
-                                ]);
+                        return buildNode($key, $data1[$key], $data2[$key], [], 'changed');
                     }
                 }
                 if (!array_key_exists($key, $data2)) {
-                    return buildNode(['key' => $key,
-                            'beforeValue' => $data1[$key],
-                            'type' => 'removed'
-                            ]);
+                    return buildNode($key, $data1[$key], null, [], 'removed');
                 }
                 if (!array_key_exists($key, $data1)) {
-                    return buildNode(['key' => $key,
-                            'afterValue' => $data2[$key],
-                            'type' => 'added'
-                            ]);
+                    return buildNode($key, null, $data2[$key], [], 'added');
                 }
             },
             $unionKeys
@@ -66,16 +47,14 @@ function buildAST($data1, $data2)
     return $buildDiff($data1, $data2);
 }
 
-function buildNode($nodeData)
+function buildNode($key, $beforeValue, $afterValue, $children, $type)
 {
-    return array_merge(
+    return
         [
-            'key' => null,
-            'beforeValue' => null,
-            'afterValue' => null,
-            'children' => [],
-            'type' => null
-        ],
-        $nodeData
-    );
+            'key' => $key,
+            'beforeValue' => $beforeValue,
+            'afterValue' => $afterValue,
+            'children' => $children,
+            'type' => $type
+        ];
 }
