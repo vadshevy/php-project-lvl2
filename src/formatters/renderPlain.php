@@ -7,15 +7,15 @@ use Funct\Collection;
 function renderPlain($ast)
 {
 
-    $render = function ($ast, $parentKey) use (&$render) {
-        return array_map(function ($node) use ($parentKey, $render) {
+    $iter = function ($ast, $parentKey) use (&$iter) {
+        return array_map(function ($node) use ($parentKey, $iter) {
             $before = stringify($node['beforeValue']);
             $after = stringify($node['afterValue']);
             $propertyName = "'{$parentKey}{$node['key']}'";
             switch ($node['type']) {
                 case 'nested':
                     $parentKey = "{$node['key']}.";
-                    return $render($node['children'], $parentKey);
+                    return $iter($node['children'], $parentKey);
                 case 'changed':
                     return "Property {$propertyName} was changed. From {$before} to {$after}";
                 case 'added':
@@ -27,7 +27,7 @@ function renderPlain($ast)
             }
         }, $ast);
     };
-    $coll = Collection\flattenAll($render($ast, ""));
+    $coll = Collection\flattenAll($iter($ast, ""));
     return implode(PHP_EOL, $coll);
 }
 
