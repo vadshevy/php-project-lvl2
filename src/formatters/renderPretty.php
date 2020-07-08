@@ -48,7 +48,7 @@ function stringify($value, $level)
     }
     if (!is_array($value)) {
         return $value;
-    } else {
+    }
         $data = array_map(function ($key) use ($value, $level, &$indent) {
             $indent = getIndent($level + 1);
             $value = stringify($value[$key], $level);
@@ -57,5 +57,4 @@ function stringify($value, $level)
         $result = implode("\n", $data);
         $indent = getIndent($level);
         return "{\n{$result}\n{$indent}}";
-    }
 }
