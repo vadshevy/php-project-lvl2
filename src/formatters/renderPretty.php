@@ -49,12 +49,12 @@ function stringify($value, $level)
     if (!is_array($value)) {
         return $value;
     }
-        $data = array_map(function ($key) use ($value, $level, &$indent) {
-            $indent = getIndent($level + 1);
-            $value = stringify($value[$key], $level);
-            return "{$indent}{$key}: {$value}";
-        }, array_keys($value));
-        $result = implode("\n", $data);
-        $indent = getIndent($level);
-        return "{\n{$result}\n{$indent}}";
+    $data = array_map(function ($key) use ($value, $level, &$indent) {
+        $indent = getIndent($level + 1);
+        $value = stringify($value[$key], $level);
+        return "{$indent}{$key}: {$value}";
+    }, array_keys($value));
+    $result = implode("\n", $data);
+    $indent = getIndent($level);
+    return "{\n{$result}\n{$indent}}";
 }
