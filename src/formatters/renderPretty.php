@@ -2,12 +2,10 @@
 
 namespace Gendiff\renderPretty;
 
-use Funct\Collection;
-
 function renderPretty($ast)
 {
     $iter = function ($coll, $level) use (&$iter) {
-        return array_map(function ($node) use ($level, $iter) {
+        $mapped = array_map(function ($node) use ($level, $iter) {
             $indent = getIndent($level);
             $indentChanged = str_repeat(' ', 4 * $level - 2);
             $formattedAfterValue = stringify($node['afterValue'], $level);
@@ -15,7 +13,7 @@ function renderPretty($ast)
 
             switch ($node['type']) {
                 case 'nested':
-                    $result = implode("\n", $iter($node['children'], $level + 1));
+                    $result =  $iter($node['children'], $level + 1);
                     return "{$indent}{$node['key']}: {\n{$result}\n{$indent}}";
                 case 'changed':
                     $lines =  [
@@ -31,8 +29,9 @@ function renderPretty($ast)
                     return "{$indentChanged}- {$node['key']}: {$formattedBeforeValue}";
             }
         }, $coll);
+        return implode("\n", $mapped);
     };
-    $result = implode("\n", ($iter($ast, 1)));
+    $result = $iter($ast, 1);
     return "{\n{$result}\n}";
 }
 
@@ -49,12 +48,12 @@ function stringify($value, $level)
     if (!is_array($value)) {
         return $value;
     }
-    $data = array_map(function ($key) use ($value, $level, &$indent) {
+    $mapped = array_map(function ($key) use ($value, $level, &$indent) {
         $indent = getIndent($level + 1);
         $value = stringify($value[$key], $level);
         return "{$indent}{$key}: {$value}";
     }, array_keys($value));
-    $result = implode("\n", $data);
+    $result = implode("\n", $mapped);
     $indent = getIndent($level);
     return "{\n{$result}\n{$indent}}";
 }
