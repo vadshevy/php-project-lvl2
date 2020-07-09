@@ -28,7 +28,7 @@ function renderPlain($ast)
         }, $ast);
     };
     $coll = Collection\flattenAll($iter($ast, ""));
-    return implode(PHP_EOL, $coll);
+    return implode("\n", $coll);
 }
 
 function stringify($value)
