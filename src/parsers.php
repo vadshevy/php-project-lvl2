@@ -8,9 +8,11 @@ function parse($data, $dataType)
 {
     switch ($dataType) {
         case 'json':
-            return json_decode($data, $assoc = true);
+            return json_decode($data);
         case 'yml':
         case 'yaml':
-            return Yaml::parse($data);
+            return Yaml::parse($data, Yaml::PARSE_OBJECT_FOR_MAP);
+        default:
+            return null;
     }
 }

@@ -28,9 +28,9 @@ DOC;
 $opts = Docopt::handle($doc, array('version' => '0.1'));
 
 
-$file1 = $opts['<firstFile>'];
-$file2 = $opts['<secondFile>'];
+$filePath1 = $opts['<firstFile>'];
+$filePath2 = $opts['<secondFile>'];
 $format = $opts['--format'];
 
-$diff = gendiff($file1, $file2, $format);
+$diff = gendiff($filePath1, $filePath2, $format);
 print_r($diff);

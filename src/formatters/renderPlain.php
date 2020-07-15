@@ -24,6 +24,8 @@ function renderPlain($ast)
                     return "Property {$propertyName} was removed";
                 case 'unchanged':
                     return [];
+                default:
+                    return null;
             }
         }, $ast);
     };

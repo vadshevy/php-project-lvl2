@@ -19,25 +19,26 @@ function genDiff($filePath1, $filePath2, $format)
 
 function buildAST($data1, $data2)
 {
-
     $buildDiff = function ($data1, $data2) use (&$buildDiff) {
-        $unionKeys = array_values(Collection\union(array_keys($data1), array_keys($data2)));
+        $keys1 = array_keys(get_object_vars($data1));
+        $keys2 = array_keys(get_object_vars($data2));
+        $unionKeys = array_values(Collection\union($keys1, $keys2));
         return array_map(
             function ($key) use (&$buildDiff, $data1, $data2) {
-                if (array_key_exists($key, $data1) && array_key_exists($key, $data2)) {
-                    if (is_array($data1[$key]) && is_array($data2[$key])) {
-                        return buildNode($key, $data1[$key], $data2[$key], $buildDiff($data1[$key], $data2[$key]), 'nested');
-                    } elseif ($data1[$key] === $data2[$key]) {
-                        return buildNode($key, $data1[$key], $data2[$key], [], 'unchanged');
+                if (!property_exists($data2, $key)) {
+                    return buildNode($key, $data1->$key, null, [], 'removed');
+                }
+                if (!property_exists($data1, $key)) {
+                    return buildNode($key, null, $data2->$key, [], 'added');
+                }
+                if (property_exists($data1, $key) && property_exists($data2, $key)) {
+                    if (is_object($data1->$key) && is_object($data2->$key)) {
+                        return buildNode($key, $data1->$key, $data2->$key, $buildDiff($data1->$key, $data2->$key), 'nested');
+                    } elseif ($data1->$key === $data2->$key) {
+                        return buildNode($key, $data1->$key, $data2->$key, [], 'unchanged');
                     } else {
-                        return buildNode($key, $data1[$key], $data2[$key], [], 'changed');
+                        return buildNode($key, $data1->$key, $data2->$key, [], 'changed');
                     }
-                }
-                if (!array_key_exists($key, $data2)) {
-                    return buildNode($key, $data1[$key], null, [], 'removed');
-                }
-                if (!array_key_exists($key, $data1)) {
-                    return buildNode($key, null, $data2[$key], [], 'added');
                 }
             },
             $unionKeys

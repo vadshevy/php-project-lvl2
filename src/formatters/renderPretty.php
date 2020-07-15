@@ -10,7 +10,6 @@ function renderPretty($ast)
             $indentChanged = str_repeat(' ', 4 * $level - 2);
             $formattedAfterValue = stringify($node['afterValue'], $level);
             $formattedBeforeValue = stringify($node['beforeValue'], $level);
-
             switch ($node['type']) {
                 case 'nested':
                     $result =  $iter($node['children'], $level + 1);
@@ -27,6 +26,8 @@ function renderPretty($ast)
                     return "{$indentChanged}+ {$node['key']}: {$formattedAfterValue}";
                 case 'removed':
                     return "{$indentChanged}- {$node['key']}: {$formattedBeforeValue}";
+                default:
+                    return null;
             }
         }, $coll);
         return implode("\n", $mapped);
@@ -42,6 +43,8 @@ function getIndent($level)
 
 function stringify($value, $level)
 {
+    is_object($value) ? $value = (array)$value : $value;
+
     if (is_bool($value)) {
         return $value === true ? 'true' : 'false';
     }
