@@ -27,7 +27,7 @@ function renderPretty($ast)
                 case 'removed':
                     return "{$indentChanged}- {$node['key']}: {$formattedBeforeValue}";
                 default:
-                    return null;
+                    throw new \Exception("Unknown type: {$node['type']}");
             }
         }, $coll);
         return implode("\n", $mapped);
@@ -43,7 +43,7 @@ function getIndent($level)
 
 function stringify($value, $level)
 {
-    is_object($value) ? $value = (array)$value : $value;
+    is_object($value) ? $value = get_object_vars($value) : $value;
 
     if (is_bool($value)) {
         return $value === true ? 'true' : 'false';
@@ -51,11 +51,12 @@ function stringify($value, $level)
     if (!is_array($value)) {
         return $value;
     }
+
     $mapped = array_map(function ($key) use ($value, $level, &$indent) {
         $indent = getIndent($level + 1);
         $value = stringify($value[$key], $level);
         return "{$indent}{$key}: {$value}";
-    }, array_keys($value));
+    }, array_keys(($value)));
     $result = implode("\n", $mapped);
     $indent = getIndent($level);
     return "{\n{$result}\n{$indent}}";

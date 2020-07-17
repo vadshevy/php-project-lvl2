@@ -25,7 +25,7 @@ function renderPlain($ast)
                 case 'unchanged':
                     return [];
                 default:
-                    return null;
+                    throw new \Exception("Unknown type: {$node['type']}");
             }
         }, $ast);
     };

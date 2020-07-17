@@ -31,14 +31,12 @@ function buildAST($data1, $data2)
                 if (!property_exists($data1, $key)) {
                     return buildNode($key, null, $data2->$key, [], 'added');
                 }
-                if (property_exists($data1, $key) && property_exists($data2, $key)) {
-                    if (is_object($data1->$key) && is_object($data2->$key)) {
-                        return buildNode($key, $data1->$key, $data2->$key, $buildDiff($data1->$key, $data2->$key), 'nested');
-                    } elseif ($data1->$key === $data2->$key) {
-                        return buildNode($key, $data1->$key, $data2->$key, [], 'unchanged');
-                    } else {
-                        return buildNode($key, $data1->$key, $data2->$key, [], 'changed');
-                    }
+                if (is_object($data1->$key) && is_object($data2->$key)) {
+                    return buildNode($key, $data1->$key, $data2->$key, $buildDiff($data1->$key, $data2->$key), 'nested');
+                } elseif ($data1->$key === $data2->$key) {
+                    return buildNode($key, $data1->$key, $data2->$key, [], 'unchanged');
+                } else {
+                    return buildNode($key, $data1->$key, $data2->$key, [], 'changed');
                 }
             },
             $unionKeys

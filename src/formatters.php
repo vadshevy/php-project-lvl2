@@ -17,7 +17,7 @@ function getFormatter($format)
             case 'pretty':
                 return renderPretty($diff);
             default:
-                throw new \Exception("Invalid format {$format}");
+                throw new \Exception("Invalid output format {$format}");
         }
     };
 }

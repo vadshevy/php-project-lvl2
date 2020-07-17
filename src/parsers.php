@@ -13,6 +13,6 @@ function parse($data, $dataType)
         case 'yaml':
             return Yaml::parse($data, Yaml::PARSE_OBJECT_FOR_MAP);
         default:
-            return null;
+            throw new \Exception("Invalid input format {$dataType}");
     }
 }
