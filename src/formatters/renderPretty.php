@@ -43,21 +43,20 @@ function getIndent($level)
 
 function stringify($value, $level)
 {
-    is_object($value) ? $value = get_object_vars($value) : $value;
-
     if (is_bool($value)) {
         return $value === true ? 'true' : 'false';
     }
-    if (!is_array($value)) {
+    if (!is_array($value) && !is_object($value)) {
         return $value;
     }
+    $keys = array_keys(get_object_vars($value));
+    $indent = getIndent($level + 1);
+    $bracketIndent = getIndent($level);
 
     $mapped = array_map(function ($key) use ($value, $level, &$indent) {
-        $indent = getIndent($level + 1);
-        $value = stringify($value[$key], $level);
-        return "{$indent}{$key}: {$value}";
-    }, array_keys(($value)));
+        $formattedValue = stringify($value->$key, $level);
+        return "{$key}: {$formattedValue}";
+    }, $keys);
     $result = implode("\n", $mapped);
-    $indent = getIndent($level);
-    return "{\n{$result}\n{$indent}}";
+    return "{\n{$indent}{$result}\n{$bracketIndent}}";
 }
