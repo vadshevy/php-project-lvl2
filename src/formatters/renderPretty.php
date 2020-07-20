@@ -44,7 +44,7 @@ function getIndent($level)
 function stringify($value, $level)
 {
     if (is_bool($value)) {
-        return $value === true ? 'true' : 'false';
+        return $value ? 'true' : 'false';
     }
     if (!is_array($value) && !is_object($value)) {
         return $value;
